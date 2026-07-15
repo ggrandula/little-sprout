@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Little Sprouts CRM</title>
+<style>
+:root{
+  --bg:#F2F4EE;
+  --ink:#1E2A26;
+  --ink-soft:#4B5A55;
+  --teal:#1F6F64;
+  --teal-dark:#164F47;
+  --mango:#E8A23D;
+  --coral:#DD5B4B;
+  --card:#FFFFFF;
+  --sage:#E8ECE3;
+  --line:#D9DED3;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+h1,h2,h3,.display{font-family:'Fraunces',serif;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+
+.app{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{
+  width:230px;
+  background:var(--teal-dark);
+  color:#EAF2EF;
+  padding:24px 16px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.brand{
+  font-family:'Fraunces',serif;
+  font-size:20px;
+  font-weight:700;
+  color:#fff;
+  margin-bottom:2px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.brand-sub{
+  font-size:11px;
+  color:#9FC9C0;
+  margin-bottom:24px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  color:#CFE3DE;
+  transition:background .15s;
+}
+.nav-item:hover{background:rgba(255,255,255,.06);}
+.nav-item.active{background:var(--teal);color:#fff;font-weight:600;}
+.nav-icon{width:16px;text-align:center;}
+.sidebar-foot{margin-top:auto;font-size:11px;color:#7EA69C;line-height:1.5;}
+
+/* MAIN */
+.main{flex:1;padding:28px 36px;min-width:0;}
+.topbar{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:24px;flex-wrap:wrap;gap:12px;
+}
+.page-title{font-size:26px;font-weight:700;margin:0 0 4px 0;}
+.page-sub{color:var(--ink-soft);font-size:14px;margin:0;}
+
+.role-switch{
+  background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:8px 12px;display:flex;align-items:center;gap:10px;font-size:13px;
+}
+.role-switch select{
+  border:none;background:var(--sage);border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;color:var(--ink);
+}
+
+/* CARDS / GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:26px;}
+.stat-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+.stat-num{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--teal-dark);}
+.stat-label{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;margin-top:2px;}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px;}
+.card h3{margin:0 0 12px 0;font-size:16px;}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+input,select,textarea{
+  font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--teal);outline-offset:1px;}
+button{
+  font-family:inherit;font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;transition:background .15s;
+}
+button:hover{background:var(--teal-dark);}
+button.secondary{background:var(--sage);color:var(--ink);}
+button.secondary:hover{background:var(--line);}
+button.danger{background:var(--coral);}
+button.wa{background:#2FAE60;}
+button.wa:hover{background:#25914F;}
+button:disabled{opacity:.45;cursor:not-allowed;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:8px 10px;color:var(--ink-soft);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line);}
+td{padding:10px 10px;border-bottom:1px solid var(--sage);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#FAFBF8;}
+
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-seedling{background:#EAF6EE;color:#2B8A4C;}
+.badge-sprout{background:#EAF3F1;color:var(--teal);}
+.badge-sapling{background:#FCF1DD;color:#B5761F;}
+.badge-bloom{background:#FBE9E6;color:var(--coral);}
+.badge-paid{background:#EAF6EE;color:#2B8A4C;}
+.badge-pending{background:#FCF1DD;color:#B5761F;}
+.badge-overdue{background:#FBE9E6;color:var(--coral);}
+
+.growth-icon{display:inline-block;width:14px;height:14px;vertical-align:-2px;}
+
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(20,30,28,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;
+}
+.modal{background:#fff;border-radius:14px;padding:24px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;}
+.modal h3{margin-top:0;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.field-row label{display:block;font-size:11px;color:var(--ink-soft);margin-bottom:3px;text-transform:uppercase;letter-spacing:.03em;}
+.field-row input,.field-row select{width:100%;}
+.full-row{margin-bottom:10px;}
+.full-row label{display:block;font-size:11px;color:var(--ink-soft);margin-bottom:3px;text-transform:uppercase;letter-spacing:.03em;}
+.full-row input,.full-row select,.full-row textarea{width:100%;}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--ink-soft);}
+.empty-state .display{font-size:18px;color:var(--ink);margin-bottom:6px;}
+
+.pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.pill{padding:6px 12px;border-radius:20px;background:var(--sage);font-size:12px;cursor:pointer;border:1px solid transparent;}
+.pill.active{background:var(--teal);color:#fff;}
+
+.log-item{border-left:3px solid var(--teal);padding:8px 12px;margin-bottom:8px;background:var(--sage);border-radius:0 8px 8px 0;font-size:13px;}
+.log-meta{font-size:11px;color:var(--ink-soft);margin-top:3px;}
+
+.child-detail-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;}
+@media (max-width:800px){.child-detail-grid{grid-template-columns:1fr;} .app{flex-direction:column;} .sidebar{width:100%;flex-direction:row;overflow-x:auto;} .sidebar-foot{display:none;}}
+
+.loading{padding:60px;text-align:center;color:var(--ink-soft);}
+
+#receiptPrintArea{display:none;}
+.receipt-box{border:1px solid var(--line);border-radius:10px;padding:20px;}
+.receipt-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--teal);padding-bottom:12px;margin-bottom:12px;}
+.receipt-brand{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--teal-dark);}
+.receipt-meta{text-align:right;font-size:12px;color:var(--ink-soft);}
+.receipt-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px;}
+.receipt-total{display:flex;justify-content:space-between;padding-top:12px;font-size:16px;font-weight:700;color:var(--teal-dark);}
+.receipt-stamp{display:inline-block;margin-top:14px;padding:4px 12px;border:2px solid #2B8A4C;color:#2B8A4C;border-radius:6px;font-weight:700;font-size:12px;letter-spacing:.05em;transform:rotate(-3deg);}
+
+@media print{
+  body *{visibility:hidden;}
+  #receiptPrintArea, #receiptPrintArea *{visibility:visible;}
+  #receiptPrintArea{display:block;position:absolute;top:0;left:0;width:100%;padding:30px;}
+}
+</style>
+</head>
+<body>
+<div id="root" class="loading">Loading Little Sprouts CRM…</div>
+<div id="receiptPrintArea"></div>
+
+<script>
+let DATA = null;
+let USER = null; // {username, role, classId} once logged in
+let ROLE = null;
+let TEACHER_CLASS = null;
+let VIEW = 'dashboard';
+let SEARCH = '';
+let MKT_FILTER = 'renewal';
+let MKT_LANG = 'en';
+let openChildId = null;
+
+const LANGS = {en:'English', si:'සිංහල', ta:'தமிழ்'};
+
+const INCIDENT_TYPES = {
+  injury: 'Injury / bump',
+  illness: 'Possible illness',
+  eating: 'Poor eating',
+  other: 'Other note'
+};
+const SEVERITY_LABELS = { note: 'Just a note', concern: 'Concern', urgent: 'Urgent' };
+
+const INCIDENT_TEMPLATES = {
+  injury: {
+    en: (parentFirst, child, desc) => `Hi ${parentFirst}, this is Little Sprouts Nursery. ${child} had a small incident today: ${desc}. We wanted to let you know right away — please reach out if you have any questions.`,
+    si: (parentFirst, child, desc) => `ආයුබෝවන් ${parentFirst}, මේ Little Sprouts පෙර පාසලෙන්. අද ${child}ට කුඩා අනතුරක් සිදු වුණා: ${desc}. ඔබට වහාම දැනුම් දෙන්න කැමතියි — ප්‍රශ්නයක් ඇත්නම් අප අමතන්න.`,
+    ta: (parentFirst, child, desc) => `வணக்கம் ${parentFirst}, இது Little Sprouts பாலர் பள்ளியிலிருந்து. இன்று ${child}க்கு ஒரு சிறிய விபத்து ஏற்பட்டது: ${desc}. உடனடியாக உங்களுக்குத் தெரிவிக்க விரும்பினோம் — ஏதேனும் கேள்விகள் இருந்தால் தொடர்பு கொள்ளுங்கள்.`
+  },
+  illness: {
+    en: (parentFirst, child, desc) => `Hi ${parentFirst}, this is Little Sprouts Nursery. We noticed ${child} may not be feeling well today: ${desc}. Please let us know if you'd like to collect early or have any guidance for us.`,
+    si: (parentFirst, child, desc) => `ආයුබෝවන් ${parentFirst}, මේ Little Sprouts පෙර පාසලෙන්. අද ${child} සුවපහසුවක් නොදැනෙන බව අපි දුටුවා: ${desc}. කලින් රැගෙන යාමට කැමතිනම් හෝ අපට උපදෙසක් ඇත්නම් කියන්න.`,
+    ta: (parentFirst, child, desc) => `வணக்கம் ${parentFirst}, இது Little Sprouts பாலர் பள்ளியிலிருந்து. இன்று ${child} உடல்நிலை சரியில்லாமல் இருப்பதை கவனித்தோம்: ${desc}. முன்கூட்டியே அழைத்துச் செல்ல விரும்பினால் அல்லது எங்களுக்கு ஏதேனும் வழிகாட்டுதல் இருந்தால் தெரியப்படுத்துங்கள்.`
+  },
+  eating: {
+    en: (parentFirst, child, desc) => `Hi ${parentFirst}, this is Little Sprouts Nursery. Just a small note — ${child} didn't eat much today: ${desc}. Wanted to keep you in the loop.`,
+    si: (parentFirst, child, desc) => `ආයුබෝවන් ${parentFirst}, මේ Little Sprouts පෙර පාසලෙන්. කුඩා සටහනක් — අද ${child} ආහාර ටිකක් අඩුවෙන් ගත්තා: ${desc}. ඔබට දැනුම් දෙන්න කැමතියි.`,
+    ta: (parentFirst, child, desc) => `வணக்கம் ${parentFirst}, இது Little Sprouts பாலர் பள்ளியிலிருந்து. ஒரு சிறு குறிப்பு — இன்று ${child} சரியாக சாப்பிடவில்லை: ${desc}. உங்களுக்குத் தெரியப்படுத்த விரும்பினோம்.`
+  },
+  other: {
+    en: (parentFirst, child, desc) => `Hi ${parentFirst}, this is Little Sprouts Nursery. A quick note about ${child}: ${desc}.`,
+    si: (parentFirst, child, desc) => `ආයුබෝවන් ${parentFirst}, මේ Little Sprouts පෙර පාසලෙන්. ${child} ගැන කුඩා සටහනක්: ${desc}.`,
+    ta: (parentFirst, child, desc) => `வணக்கம் ${parentFirst}, இது Little Sprouts பாலர் பள்ளியிலிருந்து. ${child} பற்றிய ஒரு குறிப்பு: ${desc}.`
+  }
+};
+
+const MSG_TEMPLATES = {
+  renewal: {
+    en: (parentFirst, child) => `Hi ${parentFirst}, this is Little Sprouts Nursery. A quick reminder that ${child}'s term fee is currently pending. Let us know if you'd like to arrange payment or have any questions. Thank you!`,
+    si: (parentFirst, child) => `ආයුබෝවන් ${parentFirst}, මේ Little Sprouts පෙර පාසලෙන්. ${child}ගේ මෙම වාරයේ ගාස්තුව තවම ගෙවීම් වී නොමැති බව මතක් කර දෙන්නයි. ගෙවීම සකස් කර ගැනීමට හෝ කිසියම් ප්‍රශ්නයක් ඇත්නම් අප දැනුම් දෙන්න. ස්තුතියි!`,
+    ta: (parentFirst, child) => `வணக்கம் ${parentFirst}, இது Little Sprouts பாலர் பள்ளியிலிருந்து. ${child} இன் இந்த காலாண்டு கட்டணம் இன்னும் செலுத்தப்படவில்லை என்பதை நினைவூட்ட விரும்புகிறோம். கட்டண ஏற்பாடு அல்லது ஏதேனும் கேள்விகள் இருந்தால் தெரியப்படுத்துங்கள். நன்றி!`
+  },
+  birthday: {
+    en: (parentFirst, child) => `Hi ${parentFirst}! Just a heads up that ${child}'s birthday is coming up 🎉 We'd love to celebrate at nursery — let us know if you'd like to bring a small treat to share, and happy early birthday to ${child}!`,
+    si: (parentFirst, child) => `ආයුබෝවන් ${parentFirst}! ${child}ගේ උපන්දිනය ළඟදීම පැමිණෙනවා 🎉 අපි එය පාසලේදී සමරන්න කැමතියි. පුංචි රසකැවිලි කිහිපයක් ගෙනෙන්න කැමතිනම් අපිට කියන්න. ${child}ට කලින්ම සුබ පතමු!`,
+    ta: (parentFirst, child) => `வணக்கம் ${parentFirst}! ${child} இன் பிறந்தநாள் விரைவில் வருகிறது 🎉 பள்ளியில் கொண்டாட விரும்புகிறோம். ஒரு சிறிய இனிப்பு கொண்டு வர விரும்பினால் தெரியப்படுத்துங்கள். ${child}க்கு முன்கூட்டிய பிறந்தநாள் வாழ்த்துக்கள்!`
+  },
+  sibling: {
+    en: (parentFirst) => `Hi ${parentFirst}, this is Little Sprouts Nursery. We'd love to hear if you're considering enrolling a younger sibling with us — happy to share our current openings and a referral discount if you're interested!`,
+    si: (parentFirst) => `ආයුබෝවන් ${parentFirst}, මේ Little Sprouts පෙර පාසලෙන්. ඔබේ බාල දරුවෙකු අප සමඟ ලියාපදිංචි කිරීමට උනන්දුවක් තිබේද කියලා දැනගන්න කැමතියි. දැනට තියෙන පුරප්පාඩු සහ විශේෂ referral වට්ටමක් පිළිබඳව විස්තර දෙන්නම්!`,
+    ta: (parentFirst) => `வணக்கம் ${parentFirst}, இது Little Sprouts பாலர் பள்ளியிலிருந்து. உங்கள் இளைய குழந்தையை எங்களுடன் சேர்க்க ஆர்வமாக இருக்கிறீர்களா என்பதை அறிய விரும்புகிறோம். தற்போதைய இடங்கள் மற்றும் பரிந்துரை தள்ளுபடி பற்றிய விவரங்களை மகிழ்ச்சியுடன் பகிர்வோம்!`
+  }
+};
+
+const CLASSES = ['Seedlings (1-2y)','Sprouts (2-3y)','Saplings (3-4y)','Bloomers (4-5y)'];
+const STAGE_ORDER = ['seedling','sprout','sapling','bloom'];
+const STAGE_LABEL = {seedling:'Seedling',sprout:'Sprout',sapling:'Sapling',bloom:'Bloom'};
+
+function leafIcon(color){
+  return `<svg class="growth-icon" viewBox="0 0 24 24" fill="none"><path d="M4 20C4 20 3 10 12 5C21 10 20 20 20 20C20 20 12 20 4 20Z" fill="${color}" opacity="0.9"/><path d="M12 20V9" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/></svg>`;
+}
+function stageBadge(stage){
+  const colors={seedling:'#2B8A4C',sprout:'#1F6F64',sapling:'#B5761F',bloom:'#DD5B4B'};
+  return `<span class="badge badge-${stage}">${leafIcon(colors[stage]||'#2B8A4C')}${STAGE_LABEL[stage]||stage}</span>`;
+}
+function feeBadge(status){
+  return `<span class="badge badge-${status}">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
+}
+function severityColor(sev){
+  return {note:'#1F6F64', concern:'#B5761F', urgent:'#DD5B4B'}[sev] || '#1F6F64';
+}
+function uid(prefix){return prefix+'_'+Math.random().toString(36).slice(2,9);}
+function esc(s){return (s||'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmtDate(d){ if(!d) return '—'; const dt=new Date(d); return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function daysUntil(dateStr){
+  const now=new Date(); now.setHours(0,0,0,0);
+  const d=new Date(dateStr); d.setHours(0,0,0,0);
+  return Math.round((d-now)/86400000);
+}
+function nextBirthday(dob){
+  const d=new Date(dob); const now=new Date();
+  let next=new Date(now.getFullYear(),d.getMonth(),d.getDate());
+  if(next<now){ next=new Date(now.getFullYear()+1,d.getMonth(),d.getDate()); }
+  return next;
+}
+
+// ---------- STORAGE (real backend via REST API, shared by all devices) ----------
+async function loadData(){
+  try{
+    const res = await fetch('/api/state');
+    if(res.status===401){ USER=null; renderLogin(); return; }
+    if(!res.ok) throw new Error('bad response');
+    DATA = await res.json();
+  }catch(e){
+    console.error('Failed to load state from server', e);
+    document.getElementById('root').innerHTML = '<div class="loading">Could not reach the server. Please refresh, or check that the backend is running.</div>';
+    return;
+  }
+  render();
+}
+async function apiPost(url, body){
+  const res = await fetch(url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body||{})
+  });
+  if(res.status===401){ USER=null; renderLogin('Your session expired. Please sign in again.'); throw new Error('Not authenticated'); }
+  if(!res.ok){
+    const err = await res.json().catch(()=>({error:'Unknown error'}));
+    alert('Something went wrong: ' + (err.error || res.statusText));
+    throw new Error(err.error || 'Request failed');
+  }
+  DATA = await res.json();
+  render();
+}
+async function resetData(){
+  if(!confirm('This will erase all CRM data on the server (shared by everyone using this app) and restore sample data. Continue?')) return;
+  try{ await apiPost('/api/reset'); }catch(e){}
+}
+
+// ---------- DERIVED ----------
+function parentName(id){ const p=DATA.parents.find(x=>x.id===id); return p?p.name:'Unknown'; }
+function childrenForClass(cls){ return DATA.children.filter(c=>c.classId===cls); }
+function visibleChildren(){
+  if(ROLE==='teacher' && TEACHER_CLASS){ return DATA.children.filter(c=>c.classId===TEACHER_CLASS); }
+  return DATA.children;
+}
+function feeStatusFor(child){
+  if(child.fees.some(f=>f.status==='overdue')) return 'overdue';
+  if(child.fees.some(f=>f.status==='pending')) return 'pending';
+  return 'paid';
+}
+
+// ---------- NAV ----------
+const NAV_ADMIN = [
+  {id:'dashboard',label:'Dashboard',icon:'⌂'},
+  {id:'directory',label:'Children & Parents',icon:'☺'},
+  {id:'prospects',label:'Prospects',icon:'★'},
+  {id:'fees',label:'Fees',icon:'฿'},
+  {id:'marketing',label:'Marketing',icon:'✉'},
+];
+const NAV_TEACHER = [
+  {id:'dashboard',label:'Dashboard',icon:'⌂'},
+  {id:'myclass',label:'My Class',icon:'☺'},
+];
+
+async function checkSession(){
+  try{
+    const res = await fetch('/api/me');
+    if(!res.ok) { renderLogin(); return; }
+    USER = await res.json();
+    ROLE = USER.role;
+    TEACHER_CLASS = USER.classId;
+    loadData();
+  }catch(e){
+    renderLogin();
+  }
+}
+
+function renderLogin(errorMsg){
+  document.getElementById('root').innerHTML = `
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);">
+      <div class="card" style="width:100%;max-width:340px;">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div class="brand" style="color:var(--teal-dark);justify-content:center;font-size:22px;">🌱 Little Sprouts</div>
+          <div class="log-meta">Nursery CRM — sign in</div>
+        </div>
+        ${errorMsg ? `<div style="background:#FBE9E6;color:var(--coral);padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:12px;">${esc(errorMsg)}</div>` : ''}
+        <div class="full-row"><label>Username</label><input id="loginUser" autocomplete="username"></div>
+        <div class="full-row"><label>Password</label><input id="loginPass" type="password" autocomplete="current-password"></div>
+        <button style="width:100%;margin-top:6px;" onclick="doLogin()">Sign in</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+}
+
+async function doLogin(){
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  try{
+    const res = await fetch('/api/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username, password})
+    });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({error:'Login failed'}));
+      renderLogin(err.error || 'Login failed');
+      return;
+    }
+    USER = await res.json();
+    ROLE = USER.role;
+    TEACHER_CLASS = USER.classId;
+    loadData();
+  }catch(e){
+    renderLogin('Could not reach the server. Please try again.');
+  }
+}
+
+async function doLogout(){
+  await fetch('/api/logout', {method:'POST'});
+  USER = null; DATA = null;
+  renderLogin();
+}
+
+// ---------- RENDER ----------
+function render(){
+  if(!DATA){ document.getElementById('root').innerHTML='<div class="loading">Loading…</div>'; return; }
+  const nav = ROLE==='admin' ? NAV_ADMIN : NAV_TEACHER;
+  let body = '';
+  if(VIEW==='dashboard') body = renderDashboard();
+  else if(VIEW==='directory') body = renderDirectory();
+  else if(VIEW==='prospects') body = renderProspects();
+  else if(VIEW==='fees') body = renderFees();
+  else if(VIEW==='marketing') body = renderMarketing();
+  else if(VIEW==='myclass') body = renderMyClass();
+  else if(VIEW==='childdetail') body = renderChildDetail(openChildId);
+
+  document.getElementById('root').innerHTML = `
+    <div class="app">
+      <div class="sidebar">
+        <div class="brand">🌱 Little Sprouts</div>
+        <div class="brand-sub">Nursery CRM</div>
+        ${nav.map(n=>`<div class="nav-item ${VIEW===n.id?'active':''}" onclick="goto('${n.id}')"><span class="nav-icon">${n.icon}</span>${n.label}</div>`).join('')}
+        <div class="sidebar-foot">Signed-in accounts only. Data is shared live with your team.</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <div>
+            <h1 class="page-title">${pageTitle()}</h1>
+            <p class="page-sub">${pageSub()}</p>
+          </div>
+          <div class="role-switch">
+            Signed in as <strong>${esc(USER.username)}</strong> (${ROLE==='admin'?'Admin':'Teacher · '+esc(TEACHER_CLASS)})
+            <button class="secondary" onclick="doLogout()">Log out</button>
+          </div>
+        </div>
+        ${body}
+      </div>
+    </div>
+  `;
+}
+
+function goto(view){ VIEW=view; openChildId=null; render(); if(view==='prospects') loadProspects(); }
+
+function pageTitle(){
+  return {dashboard:'Dashboard', directory:'Children & Parents', prospects:'Prospects', fees:'Fee Tracking', marketing:'Marketing & Outreach', myclass:'My Class', childdetail:'Child Profile'}[VIEW] || '';
+}
+function pageSub(){
+  return {
+    dashboard: ROLE==='admin' ? 'An overview of enrollment, fees, and outreach opportunities.' : `Attendance and notes for ${TEACHER_CLASS}.`,
+    directory: 'Full contact, fee, and communication records for every family.',
+    prospects: 'Leads from your public enrollment form, ready to follow up on.',
+    fees: 'Track term fees and payment status across all children.',
+    marketing: 'Find parents worth reaching out to, and message them on WhatsApp.',
+    myclass: 'Log attendance and add notes for children in your class.',
+    childdetail: ''
+  }[VIEW] || '';
+}
+
+function renderDashboard(){
+  const totalChildren = DATA.children.length;
+  const totalParents = DATA.parents.length;
+  const overdue = DATA.children.filter(c=>feeStatusFor(c)==='overdue').length;
+  const pending = DATA.children.filter(c=>feeStatusFor(c)==='pending').length;
+
+  if(ROLE==='teacher'){
+    const kids = childrenForClass(TEACHER_CLASS);
+    return `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num">${kids.length}</div><div class="stat-label">Children in class</div></div>
+      <div class="stat-card"><div class="stat-num">${kids.filter(k=>(k.attendance||[]).some(a=>a.date===todayStr())).length}</div><div class="stat-label">Marked present today</div></div>
+    </div>
+    <div class="card">
+      <h3>Your class at a glance</h3>
+      ${kids.length? renderChildTable(kids, false) : emptyState('No children assigned to this class yet.')}
+    </div>`;
+  }
+
+  return `
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num">${totalChildren}</div><div class="stat-label">Enrolled children</div></div>
+    <div class="stat-card"><div class="stat-num">${totalParents}</div><div class="stat-label">Parent contacts</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--coral)">${overdue}</div><div class="stat-label">Overdue fees</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#B5761F">${pending}</div><div class="stat-label">Pending fees</div></div>
+  </div>
+  <div class="card">
+    <h3>Growth stages across the nursery</h3>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      ${STAGE_ORDER.map(s=>{
+        const count = DATA.children.filter(c=>c.stage===s).length;
+        return `<div style="text-align:center;min-width:90px;">
+          <div style="font-size:22px;">${stageBadge(s)}</div>
+          <div class="stat-num" style="font-size:22px;margin-top:6px;">${count}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <h3>Recent incidents &amp; health notes</h3>
+    ${renderRecentIncidents()}
+  </div>
+  <div class="card">
+    <h3>Outreach opportunities this month</h3>
+    ${renderOutreachPreview()}
+    <div style="margin-top:10px;"><button class="secondary" onclick="goto('marketing')">Open Marketing tab →</button></div>
+  </div>
+  <div class="card">
+    <button class="danger" onclick="resetData()">Reset demo data</button>
+  </div>
+  `;
+}
+
+function renderRecentIncidents(){
+  const all = [];
+  DATA.children.forEach(c=> (c.incidents||[]).forEach(i=> all.push({...i, childName:c.name, childId:c.id})));
+  all.sort((a,b)=> b.date.localeCompare(a.date));
+  const recent = all.slice(0,6);
+  if(!recent.length) return emptyState('No incidents logged recently.');
+  return `<table><thead><tr><th>Child</th><th>Type</th><th>Severity</th><th>Note</th><th>Date</th><th>Notified</th></tr></thead><tbody>
+    ${recent.map(i=>`<tr>
+      <td>${esc(i.childName)}</td>
+      <td>${esc(INCIDENT_TYPES[i.type]||i.type)}</td>
+      <td><span class="badge" style="background:${severityColor(i.severity)}22;color:${severityColor(i.severity)};">${esc(SEVERITY_LABELS[i.severity]||i.severity)}</span></td>
+      <td>${esc(i.description)}</td>
+      <td>${fmtDate(i.date)}</td>
+      <td>${i.sentToParent ? '✓' : '—'}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function renderOutreachPreview(){
+  const items = getMarketingCandidates('renewal').concat(getMarketingCandidates('birthday')).slice(0,4);
+  if(!items.length) return emptyState('No upcoming renewals or birthdays flagged right now.');
+  return `<table><thead><tr><th>Child</th><th>Reason</th><th>When</th></tr></thead><tbody>
+    ${items.map(i=>`<tr><td>${esc(i.child.name)}</td><td>${esc(i.reason)}</td><td>${esc(i.when)}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+function emptyState(msg){
+  return `<div class="empty-state"><div class="display">Nothing here yet</div>${esc(msg)}</div>`;
+}
+
+function renderChildTable(children, showParents=true){
+  return `<table><thead><tr>
+    <th>Child</th><th>Class</th><th>Stage</th>${showParents?'<th>Parent(s)</th>':''}<th>Fee status</th><th></th>
+  </tr></thead><tbody>
+  ${children.map(c=>`
+    <tr>
+      <td><strong>${esc(c.name)}</strong><div class="log-meta">DOB ${fmtDate(c.dob)}</div></td>
+      <td>${esc(c.classId)}</td>
+      <td>${stageBadge(c.stage)}</td>
+      ${showParents?`<td>${c.parentIds.map(parentName).join(', ')}</td>`:''}
+      <td>${feeBadge(feeStatusFor(c))}</td>
+      <td><button class="secondary" onclick="openChildId='${c.id}'; VIEW='childdetail'; render();">View</button></td>
+    </tr>
+  `).join('')}
+  </tbody></table>`;
+}
+
+let PROSPECTS = [];
+async function loadProspects(){
+  try{
+    const res = await fetch('/api/prospects');
+    if(res.status===401){ USER=null; renderLogin(); return; }
+    PROSPECTS = await res.json();
+  }catch(e){
+    PROSPECTS = [];
+  }
+  render();
+}
+function prospectStatusBadge(status){
+  const map = {new:'#1F6F64', contacted:'#B5761F', enrolled:'#2B8A4C', lost:'#DD5B4B'};
+  const c = map[status] || '#1F6F64';
+  return `<span class="badge" style="background:${c}22;color:${c};">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
+}
+function renderProspects(){
+  const enrollUrl = window.location.origin + '/enroll';
+  return `
+  <div class="card">
+    <h3>Your public enrollment link</h3>
+    <p class="log-meta">Share this on Facebook, WhatsApp status, or your website. Anyone who fills it in shows up below automatically.</p>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input readonly value="${esc(enrollUrl)}" style="flex:1;min-width:220px;" onclick="this.select();">
+      <button class="secondary" onclick="navigator.clipboard.writeText('${esc(enrollUrl)}'); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy link',1500);">Copy link</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Leads</h3>
+    ${PROSPECTS.length ? `
+    <table><thead><tr><th>Name</th><th>Phone</th><th>Child</th><th>Source</th><th>Status</th><th></th></tr></thead><tbody>
+    ${PROSPECTS.map(p=>`
+      <tr>
+        <td><strong>${esc(p.parentName)}</strong>${p.message?`<div class="log-meta">${esc(p.message)}</div>`:''}</td>
+        <td class="mono">${esc(p.phone)}</td>
+        <td>${esc(p.childName||'—')}${p.childAgeNote?`<div class="log-meta">${esc(p.childAgeNote)}</div>`:''}</td>
+        <td>${esc(p.source||'—')}</td>
+        <td>${prospectStatusBadge(p.status)}</td>
+        <td style="white-space:nowrap;">
+          <a href="https://wa.me/${p.phone.replace(/[^0-9]/g,'')}" target="_blank"><button class="wa" style="padding:5px 10px;font-size:11px;">WhatsApp</button></a>
+          ${p.status!=='enrolled' ? `<button class="secondary" style="padding:5px 10px;font-size:11px;" onclick="convertProspect('${p.id}')">Convert</button>` : ''}
+          ${p.status==='new' ? `<button class="secondary" style="padding:5px 10px;font-size:11px;" onclick="setProspectStatus('${p.id}','contacted')">Mark contacted</button>` : ''}
+          ${p.status!=='lost' && p.status!=='enrolled' ? `<button class="secondary" style="padding:5px 10px;font-size:11px;" onclick="setProspectStatus('${p.id}','lost')">Mark lost</button>` : ''}
+        </td>
+      </tr>
+    `).join('')}
+    </tbody></table>
+    ` : emptyState('No leads yet — share your enrollment link to start collecting them.')}
+  </div>
+  `;
+}
+async function setProspectStatus(id, status){
+  try{
+    await fetch(`/api/prospects/${id}/status`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({status})
+    });
+    await loadProspects();
+  }catch(e){}
+}
+function convertProspect(id){
+  const p = PROSPECTS.find(x=>x.id===id);
+  if(!p) return;
+  convertingProspectId = id;
+  openAddChildModal({
+    parentName: p.parentName, phone: p.phone, email: p.email, childName: p.childName
+  });
+}
+
+function renderDirectory(){
+  const filtered = DATA.children.filter(c=>{
+    if(!SEARCH) return true;
+    const s = SEARCH.toLowerCase();
+    return c.name.toLowerCase().includes(s) || c.parentIds.some(pid=>parentName(pid).toLowerCase().includes(s));
+  });
+  return `
+  <div class="card">
+    <div class="toolbar">
+      <input placeholder="Search by child or parent name…" value="${esc(SEARCH)}" oninput="SEARCH=this.value; render();" style="flex:1;min-width:220px;">
+      <button onclick="openAddChildModal()">+ Add child / parent</button>
+    </div>
+    ${filtered.length ? renderChildTable(filtered, true) : emptyState('No matching children found.')}
+  </div>
+  `;
+}
+
+function renderFees(){
+  const rows = [];
+  DATA.children.forEach(c=>{
+    c.fees.forEach(f=>{
+      rows.push({child:c, fee:f});
+    });
+  });
+  return `
+  <div class="card">
+    <h3>All fee records</h3>
+    <table><thead><tr><th>Child</th><th>Term</th><th>Amount (LKR)</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>
+    ${rows.map(r=>`
+      <tr>
+        <td>${esc(r.child.name)}</td>
+        <td>${esc(r.fee.term)}</td>
+        <td class="mono">${r.fee.amount.toLocaleString()}</td>
+        <td>${fmtDate(r.fee.dueDate)}</td>
+        <td>${feeBadge(r.fee.status)}</td>
+        <td>
+          ${r.fee.status!=='paid' ? `<button class="secondary" onclick="markFeePaid('${r.child.id}','${r.fee.id}')">Mark paid</button>` : `<button class="secondary" onclick="showReceipt('${r.child.id}','${r.fee.id}')">Receipt</button>`}
+        </td>
+      </tr>
+    `).join('')}
+    </tbody></table>
+  </div>
+  `;
+}
+
+function getMarketingCandidates(type){
+  const out = [];
+  DATA.children.forEach(c=>{
+    if(type==='renewal'){
+      c.fees.forEach(f=>{
+        if(f.status==='pending' || f.status==='overdue'){
+          const d = daysUntil(f.dueDate);
+          out.push({child:c, reason:`${f.term} fee ${f.status==='overdue'?'overdue':'pending'}`, when: d<0?`${Math.abs(d)}d overdue`:`due in ${d}d`, priority: d});
+        }
+      });
+    } else if(type==='birthday'){
+      const nb = nextBirthday(c.dob);
+      const d = daysUntil(nb.toISOString().slice(0,10));
+      if(d<=30){
+        out.push({child:c, reason:'Upcoming birthday', when:`in ${d}d`, priority:d});
+      }
+    } else if(type==='sibling'){
+      // parents with only one enrolled child could have younger siblings - heuristic: notes mention "younger" or "sibling"
+      c.parentIds.forEach(pid=>{
+        const p = DATA.parents.find(x=>x.id===pid);
+        if(p && /younger|sibling|future/i.test(p.notes||'')){
+          out.push({child:c, reason:`Parent note suggests a sibling opportunity (${p.name})`, when:'—', priority:0});
+        }
+      });
+    }
+  });
+  return out.sort((a,b)=>a.priority-b.priority);
+}
+
+function renderMarketing(){
+  const candidates = getMarketingCandidates(MKT_FILTER);
+  return `
+  <div class="card">
+    <div class="pill-row">
+      <div class="pill ${MKT_FILTER==='renewal'?'active':''}" onclick="MKT_FILTER='renewal'; render();">Payment reminders (pending &amp; overdue only)</div>
+      <div class="pill ${MKT_FILTER==='birthday'?'active':''}" onclick="MKT_FILTER='birthday'; render();">Upcoming birthdays</div>
+      <div class="pill ${MKT_FILTER==='sibling'?'active':''}" onclick="MKT_FILTER='sibling'; render();">Sibling / referral leads</div>
+    </div>
+    <div class="pill-row">
+      <span class="log-meta" style="align-self:center;margin-right:4px;">Message language:</span>
+      ${Object.keys(LANGS).map(l=>`<div class="pill ${MKT_LANG===l?'active':''}" onclick="MKT_LANG='${l}'; render();">${LANGS[l]}</div>`).join('')}
+    </div>
+    ${candidates.length ? `
+    <table><thead><tr><th>Child</th><th>Parent</th><th>Reason</th><th>Timing</th><th></th></tr></thead><tbody>
+    ${candidates.map(c=>{
+      const primaryParent = DATA.parents.find(p=>p.id===c.child.parentIds[0]);
+      const msg = buildWaMessage(MKT_FILTER, c.child, primaryParent, MKT_LANG);
+      const waLink = primaryParent ? `https://wa.me/${primaryParent.phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(msg)}` : '#';
+      return `<tr>
+        <td>${esc(c.child.name)}</td>
+        <td>${primaryParent?esc(primaryParent.name):'—'}</td>
+        <td>${esc(c.reason)}</td>
+        <td>${esc(c.when)}</td>
+        <td>${primaryParent?`<a href="${waLink}" target="_blank"><button class="wa">WhatsApp</button></a>`:''}</td>
+      </tr>`;
+    }).join('')}
+    </tbody></table>
+    ` : emptyState(MKT_FILTER==='renewal' ? 'No parents currently have pending or overdue fees.' : 'No candidates match this filter right now.')}
+  </div>
+  <div class="card">
+    <h3>Message template preview</h3>
+    <p class="log-meta">Clicking "WhatsApp" opens a pre-filled chat with the parent in the selected language — you can edit the message before sending.</p>
+  </div>
+  `;
+}
+
+function buildWaMessage(type, child, parent, lang){
+  const parentFirst = parent ? parent.name.split(' ')[0] : 'there';
+  const l = lang || MKT_LANG;
+  const tmpl = MSG_TEMPLATES[type][l] || MSG_TEMPLATES[type].en;
+  return tmpl(parentFirst, child.name);
+}
+
+function renderMyClass(){
+  const kids = childrenForClass(TEACHER_CLASS);
+  return `
+  <div class="card">
+    <h3>${esc(TEACHER_CLASS)}</h3>
+    ${kids.length ? kids.map(c=>`
+      <div style="border-bottom:1px solid var(--sage);padding:14px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>${esc(c.name)}</strong>
+          <div>
+            <button class="secondary" onclick="markAttendance('${c.id}')">Mark present today</button>
+            <button class="secondary" onclick="openNoteModal('${c.id}')">+ Add note</button>
+            <button class="danger" onclick="openIncidentModal('${c.id}')">+ Report incident</button>
+          </div>
+        </div>
+        <div class="log-meta">Recent: ${ (c.attendance||[]).slice(-1)[0] ? fmtDate((c.attendance.slice(-1)[0]).date)+' — '+esc(c.attendance.slice(-1)[0].note||'Present') : 'No entries yet'}</div>
+      </div>
+    `).join('') : emptyState('No children assigned to this class yet.')}
+  </div>
+  `;
+}
+
+function renderChildDetail(id){
+  const c = DATA.children.find(x=>x.id===id);
+  if(!c) return emptyState('Child not found.');
+  return `
+  <button class="secondary" onclick="goto(ROLE==='teacher'?'myclass':'directory')">← Back</button>
+  <div class="card" style="margin-top:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div>
+        <h3 style="margin-bottom:2px;">${esc(c.name)} ${stageBadge(c.stage)}</h3>
+        <div class="log-meta">DOB ${fmtDate(c.dob)} · ${esc(c.classId)} · Enrolled ${fmtDate(c.enrollDate)}</div>
+      </div>
+      ${ROLE==='admin' ? `<button class="secondary" onclick="cycleStage('${c.id}')">Advance growth stage →</button>` : ''}
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+      <h3 style="margin:0;">Incident &amp; Health Log</h3>
+      <button onclick="openIncidentModal('${c.id}')">+ Report incident</button>
+    </div>
+    ${(c.incidents||[]).length ? c.incidents.map(i=>`
+      <div class="log-item" style="border-left-color:${severityColor(i.severity)};">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+          <span class="badge" style="background:${severityColor(i.severity)}22;color:${severityColor(i.severity)};">${esc(INCIDENT_TYPES[i.type]||i.type)} · ${esc(SEVERITY_LABELS[i.severity]||i.severity)}</span>
+          ${i.sentToParent ? '<span class="log-meta">✓ Sent to parent</span>' : `<button class="secondary" style="padding:3px 10px;font-size:11px;" onclick="notifyIncident('${c.id}','${i.id}')">Notify parent (WhatsApp)</button>`}
+        </div>
+        <div style="margin-top:6px;">${esc(i.description)}</div>
+        <div class="log-meta">${fmtDate(i.date)} · logged by ${esc(i.staff)}</div>
+      </div>
+    `).join('') : emptyState('No incidents logged — nothing to report is good news.')}
+  </div>
+  <div class="child-detail-grid">
+    <div>
+      <div class="card">
+        <h3>Parents / Guardians</h3>
+        ${c.parentIds.map(pid=>{
+          const p = DATA.parents.find(x=>x.id===pid);
+          if(!p) return '';
+          return `<div style="margin-bottom:10px;">
+            <strong>${esc(p.name)}</strong> <span class="log-meta">(${esc(p.relation)})</span><br>
+            <span class="mono">${esc(p.phone)}</span> · ${esc(p.email)}<br>
+            <span class="log-meta">${esc(p.address)}</span>
+            ${p.notes ? `<div class="log-meta">Note: ${esc(p.notes)}</div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+      ${ROLE==='admin' ? `
+      <div class="card">
+        <h3>Fees</h3>
+        <table><thead><tr><th>Term</th><th>Amount</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>
+        ${c.fees.map(f=>`<tr>
+          <td>${esc(f.term)}</td><td class="mono">${f.amount.toLocaleString()}</td><td>${fmtDate(f.dueDate)}</td><td>${feeBadge(f.status)}</td>
+          <td>${f.status!=='paid'?`<button class="secondary" onclick="markFeePaid('${c.id}','${f.id}')">Mark paid</button>`:`<button class="secondary" onclick="showReceipt('${c.id}','${f.id}')">Receipt</button>`}</td>
+        </tr>`).join('')}
+        </tbody></table>
+      </div>
+      <div class="card">
+        <h3>Communication log</h3>
+        ${(c.comms||[]).slice().reverse().map(m=>`<div class="log-item">${esc(m.note)}<div class="log-meta">${esc(m.channel)} · ${fmtDate(m.date)} · ${esc(m.staff)}</div></div>`).join('') || emptyState('No communication logged yet.')}
+        <button class="secondary" style="margin-top:8px;" onclick="openCommModal('${c.id}')">+ Log communication</button>
+      </div>` : ''}
+    </div>
+    <div>
+      <div class="card">
+        <h3>Attendance & teacher notes</h3>
+        ${(c.attendance||[]).slice().reverse().map(a=>`<div class="log-item">${a.present?'Present':'Absent'}${a.note?` — ${esc(a.note)}`:''}<div class="log-meta">${fmtDate(a.date)}</div></div>`).join('') || emptyState('No attendance logged yet.')}
+        <div style="margin-top:8px;display:flex;gap:8px;">
+          <button class="secondary" onclick="markAttendance('${c.id}')">Mark present today</button>
+          <button class="secondary" onclick="openNoteModal('${c.id}')">+ Add note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+// ---------- ACTIONS ----------
+async function markFeePaid(childId, feeId){
+  try{
+    await apiPost(`/api/fees/${feeId}/pay`);
+    showReceipt(childId, feeId);
+  }catch(e){}
+}
+
+function showReceipt(childId, feeId){
+  const c = DATA.children.find(x=>x.id===childId);
+  const f = c.fees.find(x=>x.id===feeId);
+  const primaryParent = DATA.parents.find(p=>p.id===c.parentIds[0]);
+  const receiptHtml = `
+    <div class="receipt-box" id="receiptContent">
+      <div class="receipt-head">
+        <div>
+          <div class="receipt-brand">🌱 Little Sprouts Nursery</div>
+          <div class="log-meta">Payment Receipt</div>
+        </div>
+        <div class="receipt-meta">
+          Receipt No: <strong>${esc(f.receiptNo || '—')}</strong><br>
+          Date issued: ${fmtDate(f.paidDate)}
+        </div>
+      </div>
+      <div class="receipt-row"><span>Received from</span><strong>${esc(primaryParent?primaryParent.name:'—')}</strong></div>
+      <div class="receipt-row"><span>For child</span><strong>${esc(c.name)} (${esc(c.classId)})</strong></div>
+      <div class="receipt-row"><span>Term</span><strong>${esc(f.term)}</strong></div>
+      <div class="receipt-row"><span>Original due date</span><strong>${fmtDate(f.dueDate)}</strong></div>
+      <div class="receipt-total"><span>Amount paid</span><span class="mono">LKR ${f.amount.toLocaleString()}</span></div>
+      <div class="receipt-stamp">PAID</div>
+    </div>
+  `;
+  showModal(`
+    <h3>Receipt</h3>
+    ${receiptHtml}
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal()">Close</button>
+      <button onclick="printReceipt()">Print / Save as PDF</button>
+    </div>
+  `);
+  document.getElementById('receiptPrintArea').innerHTML = receiptHtml;
+}
+function printReceipt(){
+  window.print();
+}
+async function cycleStage(childId){
+  try{ await apiPost(`/api/children/${childId}/stage`); }catch(e){}
+}
+async function markAttendance(childId){
+  const c = DATA.children.find(x=>x.id===childId);
+  const today = todayStr();
+  if((c.attendance||[]).some(a=>a.date===today)) { alert('Already marked present today.'); return; }
+  try{ await apiPost(`/api/children/${childId}/attendance`, {}); }catch(e){}
+}
+
+function openIncidentModal(childId){
+  showModal(`
+    <h3>Report an incident</h3>
+    <div class="field-row">
+      <div><label>Type</label><select id="incType">
+        <option value="injury">Injury / bump</option>
+        <option value="illness">Possible illness</option>
+        <option value="eating">Poor eating</option>
+        <option value="other">Other note</option>
+      </select></div>
+      <div><label>Severity</label><select id="incSeverity">
+        <option value="note">Just a note</option>
+        <option value="concern">Concern — please be aware</option>
+        <option value="urgent">Urgent — please call</option>
+      </select></div>
+    </div>
+    <div class="full-row"><label>What happened</label><textarea id="incDesc" rows="3" placeholder="e.g. Bumped knee on the play slide, small graze, iced and comforted."></textarea></div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal()">Cancel</button>
+      <button class="danger" onclick="saveIncident('${childId}')">Save &amp; continue</button>
+    </div>
+  `);
+}
+async function saveIncident(childId){
+  const type = document.getElementById('incType').value;
+  const severity = document.getElementById('incSeverity').value;
+  const description = document.getElementById('incDesc').value.trim();
+  if(!description){ alert('Please describe what happened.'); return; }
+  closeModal();
+  try{
+    const res = await fetch(`/api/children/${childId}/incidents`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({type, severity, description})
+    });
+    if(res.status===401){ USER=null; renderLogin('Your session expired. Please sign in again.'); return; }
+    if(!res.ok){ const err = await res.json().catch(()=>({})); alert('Failed to save: '+(err.error||'unknown error')); return; }
+    const result = await res.json();
+    DATA = result;
+    render();
+    const newId = result.newIncidentId;
+    if(newId) offerIncidentNotify(childId, newId, type, description);
+  }catch(e){
+    alert('Could not reach the server.');
+  }
+}
+function offerIncidentNotify(childId, incidentId, type, description){
+  const c = DATA.children.find(x=>x.id===childId);
+  const primaryParent = DATA.parents.find(p=>p.id===c.parentIds[0]);
+  if(!primaryParent) return;
+  const lang = MKT_LANG || 'en';
+  const tmpl = (INCIDENT_TEMPLATES[type] && INCIDENT_TEMPLATES[type][lang]) || INCIDENT_TEMPLATES[type].en;
+  const parentFirst = primaryParent.name.split(' ')[0];
+  const msg = tmpl(parentFirst, c.name, description);
+  const waLink = `https://wa.me/${primaryParent.phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(msg)}`;
+  showModal(`
+    <h3>Notify ${esc(primaryParent.name)}?</h3>
+    <p class="log-meta">This incident is saved either way. Sending a WhatsApp message is optional but recommended.</p>
+    <div class="log-item">${esc(msg)}</div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal()">Not now</button>
+      <a href="${waLink}" target="_blank" onclick="markIncidentSent('${incidentId}')"><button class="wa">Send on WhatsApp</button></a>
+    </div>
+  `);
+}
+async function markIncidentSent(incidentId){
+  try{ await apiPost(`/api/incidents/${incidentId}/sent`); }catch(e){}
+  closeModal();
+}
+async function notifyIncident(childId, incidentId){
+  const c = DATA.children.find(x=>x.id===childId);
+  const inc = (c.incidents||[]).find(i=>i.id===incidentId);
+  if(!inc) return;
+  offerIncidentNotify(childId, incidentId, inc.type, inc.description);
+}
+
+function openNoteModal(childId){
+  showModal(`
+    <h3>Add a note</h3>
+    <div class="full-row"><label>Note</label><textarea id="noteText" rows="3" placeholder="e.g. Had a great day at the sensory table"></textarea></div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal()">Cancel</button>
+      <button onclick="saveNote('${childId}')">Save note</button>
+    </div>
+  `);
+}
+async function saveNote(childId){
+  const text = document.getElementById('noteText').value.trim();
+  closeModal();
+  if(!text) return;
+  try{ await apiPost(`/api/children/${childId}/attendance`, {note:text}); }catch(e){}
+}
+
+function openCommModal(childId){
+  showModal(`
+    <h3>Log a communication</h3>
+    <div class="field-row">
+      <div><label>Channel</label><select id="commChannel"><option>WhatsApp</option><option>Phone call</option><option>Email</option><option>In person</option></select></div>
+      <div><label>Staff member</label><input id="commStaff" value="Admin"></div>
+    </div>
+    <div class="full-row"><label>Note</label><textarea id="commNote" rows="3" placeholder="What was discussed?"></textarea></div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal()">Cancel</button>
+      <button onclick="saveComm('${childId}')">Save</button>
+    </div>
+  `);
+}
+async function saveComm(childId){
+  const channel = document.getElementById('commChannel').value;
+  const staff = document.getElementById('commStaff').value || 'Admin';
+  const note = document.getElementById('commNote').value.trim();
+  closeModal();
+  if(!note) return;
+  try{ await apiPost(`/api/children/${childId}/comms`, {channel, note, staff}); }catch(e){}
+}
+
+let convertingProspectId = null;
+function openAddChildModal(prefill){
+  prefill = prefill || {};
+  showModal(`
+    <h3>Add child &amp; parent</h3>
+    ${convertingProspectId ? `<p class="log-meta">Converting a lead — details below are pre-filled from their enquiry.</p>` : ''}
+    <div class="field-row">
+      <div><label>Child name</label><input id="newChildName" value="${esc(prefill.childName||'')}"></div>
+      <div><label>Date of birth</label><input id="newChildDob" type="date"></div>
+    </div>
+    <div class="field-row">
+      <div><label>Class</label><select id="newChildClass">${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select></div>
+      <div><label>Enrollment date</label><input id="newChildEnroll" type="date" value="${todayStr()}"></div>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--line);margin:14px 0;">
+    <div class="field-row">
+      <div><label>Parent name</label><input id="newParentName" value="${esc(prefill.parentName||'')}"></div>
+      <div><label>Relation</label><select id="newParentRelation"><option>Mother</option><option>Father</option><option>Guardian</option></select></div>
+    </div>
+    <div class="field-row">
+      <div><label>Phone (WhatsApp)</label><input id="newParentPhone" placeholder="+9477..." value="${esc(prefill.phone||'')}"></div>
+      <div><label>Email</label><input id="newParentEmail" value="${esc(prefill.email||'')}"></div>
+    </div>
+    <div class="full-row"><label>Address</label><input id="newParentAddress"></div>
+    <div class="full-row"><label>Notes</label><textarea id="newParentNotes" rows="2" placeholder="e.g. has a younger sibling, interested in future enrollment"></textarea></div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="convertingProspectId=null; closeModal();">Cancel</button>
+      <button onclick="saveNewChild()">Add record</button>
+    </div>
+  `);
+}
+async function saveNewChild(){
+  const childName = document.getElementById('newChildName').value.trim();
+  const parentName_ = document.getElementById('newParentName').value.trim();
+  const phone = document.getElementById('newParentPhone').value.trim();
+  if(!childName || !parentName_ || !phone){ alert('Child name, parent name, and phone are required.'); return; }
+  const payload = {
+    childName,
+    dob: document.getElementById('newChildDob').value || todayStr(),
+    classId: document.getElementById('newChildClass').value,
+    enrollDate: document.getElementById('newChildEnroll').value || todayStr(),
+    parentName: parentName_,
+    relation: document.getElementById('newParentRelation').value,
+    phone,
+    email: document.getElementById('newParentEmail').value.trim(),
+    address: document.getElementById('newParentAddress').value.trim(),
+    notes: document.getElementById('newParentNotes').value.trim()
+  };
+  const finishingProspectId = convertingProspectId;
+  convertingProspectId = null;
+  closeModal();
+  try{
+    await apiPost('/api/children', payload);
+    if(finishingProspectId){
+      await setProspectStatus(finishingProspectId, 'enrolled');
+    }
+    goto('directory');
+  }catch(e){}
+}
+
+function showModal(html){
+  const el = document.createElement('div');
+  el.className='modal-backdrop';
+  el.id='modalRoot';
+  el.innerHTML = `<div class="modal">${html}</div>`;
+  el.addEventListener('click', (e)=>{ if(e.target.id==='modalRoot') closeModal(); });
+  document.body.appendChild(el);
+}
+function closeModal(){
+  const el = document.getElementById('modalRoot');
+  if(el) el.remove();
+}
+
+// init
+checkSession();
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enroll — Little Sprouts Nursery</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+:root{
+  --bg:#F2F4EE; --ink:#1E2A26; --ink-soft:#4B5A55;
+  --teal:#1F6F64; --teal-dark:#164F47; --mango:#E8A23D;
+  --card:#FFFFFF; --sage:#E8ECE3; --line:#D9DED3;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px;max-width:460px;width:100%;}
+.brand{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--teal-dark);text-align:center;}
+.sub{text-align:center;color:var(--ink-soft);font-size:14px;margin-top:4px;margin-bottom:24px;}
+label{display:block;font-size:11px;color:var(--ink-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em;}
+.field{margin-bottom:14px;}
+input,select,textarea{
+  width:100%;font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--teal);outline-offset:1px;}
+button{
+  width:100%;font-family:inherit;font-size:15px;font-weight:600;padding:12px;border-radius:10px;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;margin-top:6px;
+}
+button:hover{background:var(--teal-dark);}
+button:disabled{opacity:.5;cursor:not-allowed;}
+.success{text-align:center;padding:20px 0;}
+.success .icon{font-size:40px;margin-bottom:10px;}
+.error-box{background:#FBE9E6;color:#DD5B4B;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:14px;}
+.footnote{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="card">
+    <div class="brand">🌱 Little Sprouts Nursery</div>
+    <div class="sub">Tell us a bit about your family and we'll be in touch.</div>
+    <div id="formArea">
+      <div id="errorBox"></div>
+      <div class="field"><label>Your name *</label><input id="parentName" placeholder="e.g. Nadeesha Perera"></div>
+      <div class="field"><label>Phone / WhatsApp number *</label><input id="phone" placeholder="e.g. 077 123 4567"></div>
+      <div class="field"><label>Email</label><input id="email" type="email" placeholder="optional"></div>
+      <div class="field"><label>Child's name</label><input id="childName" placeholder="optional"></div>
+      <div class="field"><label>Child's age / expected start</label><input id="childAgeNote" placeholder="e.g. 2 years old, or 'expecting, due next year'"></div>
+      <div class="field">
+        <label>How did you hear about us?</label>
+        <select id="source">
+          <option value="">Prefer not to say</option>
+          <option value="Referral">Friend / family referral</option>
+          <option value="Social media">Social media</option>
+          <option value="Google search">Google search</option>
+          <option value="Walk-in">Walked past / saw the location</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Anything else you'd like us to know?</label><textarea id="message" rows="3" placeholder="optional"></textarea></div>
+      <button id="submitBtn" onclick="submitForm()">Submit interest</button>
+    </div>
+  </div>
+</div>
+<script>
+async function submitForm(){
+  const parentName = document.getElementById('parentName').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const errorBox = document.getElementById('errorBox');
+  errorBox.innerHTML = '';
+  if(!parentName || !phone){
+    errorBox.innerHTML = '<div class="error-box">Please fill in your name and phone number.</div>';
+    return;
+  }
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  try{
+    const res = await fetch('/api/prospects', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        parentName, phone,
+        email: document.getElementById('email').value.trim(),
+        childName: document.getElementById('childName').value.trim(),
+        childAgeNote: document.getElementById('childAgeNote').value.trim(),
+        source: document.getElementById('source').value,
+        message: document.getElementById('message').value.trim()
+      })
+    });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({error:'Something went wrong'}));
+      errorBox.innerHTML = '<div class="error-box">'+ (err.error||'Something went wrong. Please try again.') +'</div>';
+      btn.disabled = false;
+      btn.textContent = 'Submit interest';
+      return;
+    }
+    document.getElementById('formArea').innerHTML = `
+      <div class="success">
+        <div class="icon">🌱</div>
+        <div style="font-family:'Fraunces',serif;font-size:19px;font-weight:700;">Thank you!</div>
+        <div style="color:var(--ink-soft);margin-top:6px;">We've received your details and will be in touch soon.</div>
+      </div>
+    `;
+  }catch(e){
+    errorBox.innerHTML = '<div class="error-box">Could not reach the server. Please check your connection and try again.</div>';
+    btn.disabled = false;
+    btn.textContent = 'Submit interest';
+  }
+}
+</script>
+</body>
+</html>
